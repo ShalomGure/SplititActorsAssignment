@@ -12,4 +12,5 @@ public class ActorDetailDto
     public DateTime? BirthDate { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
     public List<string> KnownFor { get; set; } = new();
+    public string Source { get; set; } = string.Empty;
 }

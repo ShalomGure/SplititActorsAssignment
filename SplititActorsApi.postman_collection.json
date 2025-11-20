@@ -1,0 +1,585 @@
+{
+	"info": {
+		"_postman_id": "splitit-actors-api",
+		"name": "Splitit Actors API",
+		"description": "Complete API collection for the Splitit Actors API with OAuth2 authentication.\n\nBefore using:\n1. Set the 'base_url' variable (default: http://localhost:5081)\n2. Get your access token from Splitit's auth server\n3. Set the 'bearer_token' variable with your token",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Get Access Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"bearer_token\", jsonData.access_token);",
+									"    console.log(\"Token saved to bearer_token variable\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "job.assignment.api",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://id.sandbox.splitit.com/connect/token",
+							"protocol": "https",
+							"host": [
+								"id",
+								"sandbox",
+								"splitit",
+								"com"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						},
+						"description": "Get OAuth2 access token from Splitit's authorization server.\n\nBefore running:\n1. Set your client_id variable\n2. Set your client_secret variable\n\nThe token will be automatically saved to the bearer_token variable."
+					},
+					"response": []
+				}
+			],
+			"description": "OAuth2 authentication endpoints"
+		},
+		{
+			"name": "Actors",
+			"item": [
+				{
+					"name": "Get All Actors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/actors?pageNumber=1&pageSize=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "",
+									"description": "Filter by actor name (partial match)",
+									"disabled": true
+								},
+								{
+									"key": "minRank",
+									"value": "",
+									"description": "Minimum rank (inclusive)",
+									"disabled": true
+								},
+								{
+									"key": "maxRank",
+									"value": "",
+									"description": "Maximum rank (inclusive)",
+									"disabled": true
+								},
+								{
+									"key": "pageNumber",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "pageSize",
+									"value": "10",
+									"description": "Items per page (1-100, default: 10)"
+								}
+							]
+						},
+						"description": "Get a paginated list of actors with optional filtering.\n\nReturns actor name and ID only.\n\nQuery Parameters:\n- name: Filter by name (partial match, case-insensitive)\n- minRank: Minimum rank (inclusive)\n- maxRank: Maximum rank (inclusive)\n- pageNumber: Page number (must be >= 1)\n- pageSize: Items per page (1-100)"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/actors?pageNumber=1&pageSize=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"actors"
+									],
+									"query": [
+										{
+											"key": "pageNumber",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"items\": [\n    {\n      \"id\": 1,\n      \"name\": \"Tom Hanks\"\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Scarlett Johansson\"\n    }\n  ],\n  \"totalCount\": 75,\n  \"pageNumber\": 1,\n  \"pageSize\": 10,\n  \"totalPages\": 8\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Actors - With Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/actors?name=tom&minRank=1&maxRank=50&pageNumber=1&pageSize=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "tom",
+									"description": "Filter by actor name"
+								},
+								{
+									"key": "minRank",
+									"value": "1",
+									"description": "Minimum rank"
+								},
+								{
+									"key": "maxRank",
+									"value": "50",
+									"description": "Maximum rank"
+								},
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Example of filtering actors by name and rank range."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Actor by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/actors/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors",
+								"1"
+							]
+						},
+						"description": "Get detailed information for a specific actor by ID.\n\nReturns full actor details including bio, birth date, image URL, and known works."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/actors/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"actors",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"name\": \"Tom Hanks\",\n  \"rank\": 1,\n  \"bio\": \"Thomas Jeffrey Hanks was born in Concord, California...\",\n  \"birthDate\": \"1956-07-09T00:00:00\",\n  \"imageUrl\": \"https://m.media-amazon.com/images/M/...\",\n  \"knownFor\": [\n    \"Forrest Gump\",\n    \"Cast Away\",\n    \"Saving Private Ryan\"\n  ]\n}"
+						},
+						{
+							"name": "Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/actors/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"actors",
+										"999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Actor with ID 999 not found.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Actor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Leonardo DiCaprio\",\n  \"rank\": 100,\n  \"bio\": \"Few actors in the world have had a career quite as diverse as Leonardo DiCaprio's.\",\n  \"birthDate\": \"1974-11-11\",\n  \"imageUrl\": \"https://example.com/dicaprio.jpg\",\n  \"knownFor\": [\n    \"Titanic\",\n    \"Inception\",\n    \"The Wolf of Wall Street\"\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/actors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors"
+							]
+						},
+						"description": "Create a new actor.\n\nValidation:\n- name: Required, max 200 characters\n- rank: Required, must be > 0, must be unique\n- bio: Optional, max 2000 characters\n- birthDate: Optional, must be in the past\n- imageUrl: Optional, max 500 characters\n- knownFor: Optional, max 10 items, each max 200 characters"
+					},
+					"response": [
+						{
+							"name": "Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Leonardo DiCaprio\",\n  \"rank\": 100,\n  \"bio\": \"Few actors in the world have had a career quite as diverse as Leonardo DiCaprio's.\",\n  \"birthDate\": \"1974-11-11\",\n  \"imageUrl\": \"https://example.com/dicaprio.jpg\",\n  \"knownFor\": [\n    \"Titanic\",\n    \"Inception\",\n    \"The Wolf of Wall Street\"\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/actors",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"actors"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Location",
+									"value": "/api/actors/76"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 76,\n  \"name\": \"Leonardo DiCaprio\",\n  \"rank\": 100,\n  \"bio\": \"Few actors in the world have had a career quite as diverse as Leonardo DiCaprio's.\",\n  \"birthDate\": \"1974-11-11T00:00:00\",\n  \"imageUrl\": \"https://example.com/dicaprio.jpg\",\n  \"knownFor\": [\n    \"Titanic\",\n    \"Inception\",\n    \"The Wolf of Wall Street\"\n  ]\n}"
+						},
+						{
+							"name": "Conflict - Duplicate Rank",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Test Actor\",\n  \"rank\": 1,\n  \"bio\": \"Test bio\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/actors",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"actors"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"An actor with rank 1 already exists.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Actor",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Leonardo DiCaprio\",\n  \"rank\": 100,\n  \"bio\": \"Updated biography: Few actors in the world have had a career quite as diverse as Leonardo DiCaprio's. Born in Los Angeles...\",\n  \"birthDate\": \"1974-11-11\",\n  \"imageUrl\": \"https://example.com/dicaprio-updated.jpg\",\n  \"knownFor\": [\n    \"Titanic\",\n    \"Inception\",\n    \"The Wolf of Wall Street\",\n    \"The Revenant\"\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/actors/76",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors",
+								"76"
+							]
+						},
+						"description": "Update an existing actor.\n\nAll fields are required in the request body.\n\nValidation rules are the same as Create Actor."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Leonardo DiCaprio\",\n  \"rank\": 100,\n  \"bio\": \"Updated biography...\",\n  \"birthDate\": \"1974-11-11\",\n  \"imageUrl\": \"https://example.com/dicaprio-updated.jpg\",\n  \"knownFor\": [\n    \"Titanic\",\n    \"Inception\",\n    \"The Wolf of Wall Street\",\n    \"The Revenant\"\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/actors/76",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"actors",
+										"76"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 76,\n  \"name\": \"Leonardo DiCaprio\",\n  \"rank\": 100,\n  \"bio\": \"Updated biography...\",\n  \"birthDate\": \"1974-11-11T00:00:00\",\n  \"imageUrl\": \"https://example.com/dicaprio-updated.jpg\",\n  \"knownFor\": [\n    \"Titanic\",\n    \"Inception\",\n    \"The Wolf of Wall Street\",\n    \"The Revenant\"\n  ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Actor",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/actors/76",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors",
+								"76"
+							]
+						},
+						"description": "Delete an actor by ID.\n\nReturns 204 No Content on success."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/actors/76",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"actors",
+										"76"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": null,
+							"header": [],
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/actors/999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"actors",
+										"999"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Actor with ID 999 not found.\"\n}"
+						}
+					]
+				}
+			],
+			"description": "CRUD operations for actors"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5081",
+			"type": "string"
+		},
+		{
+			"key": "bearer_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "client_id",
+			"value": "YOUR_CLIENT_ID",
+			"type": "string"
+		},
+		{
+			"key": "client_secret",
+			"value": "YOUR_CLIENT_SECRET",
+			"type": "string"
+		}
+	]
+}

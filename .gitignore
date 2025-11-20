@@ -161,3 +161,6 @@ appsettings.*.json
 
 # Claude Code folder (optional - depends if you want to version control it)
 .claude/
+
+# Temporary/debugging files
+*.html
