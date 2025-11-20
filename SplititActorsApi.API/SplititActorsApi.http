@@ -1,0 +1,6 @@
+@SplititActorsApi_HostAddress = http://localhost:5081
+
+GET {{SplititActorsApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
